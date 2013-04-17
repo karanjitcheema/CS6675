@@ -1,0 +1,55 @@
+# NameNode - http://localhost:50070/
+# JobTracker - http://localhost:50030/
+
+# To reset the hadoop node
+bin/stop-all.sh
+rm -r /tmp/*
+rm -r logs/*
+bin/hadoop namenode -format
+
+# Compile the code into a jar
+javac -classpath /home/tanay/Desktop/hadoop-1.0.4/hadoop-core-1.0.4.jar:/home/tanay/Desktop/hadoop-1.0.4/json-simple-1.1.1.jar -d aic.trends.classes MapReduceTrends.java
+jar -cf tweetstrends.jar -C aic.trends.classes/ .
+
+# Compile the index code in a jar
+javac -classpath /home/tanay/Desktop/hadoop-1.0.4/hadoop-core-1.0.4.jar:/home/tanay/Desktop/hadoop-1.0.4/json-simple-1.1.1.jar -d aic.index.classes MapReduceIndex.java
+jar -cf tweetsindex.jar -C aic.index.classes/ .
+
+# After creating the jar, open the jar and put the json jar in the lib. Also change the manifest to match the example jar and then compress again
+# Place the compressed jar as tweetstrends.jar in the hadoop home folder
+
+# Format the input and the output directories
+bin/hadoop fs -rmr /user/tanay/input
+bin/hadoop fs -rmr /user/tanay/output
+
+# Upload the input data
+# bin/hadoop fs -put <localsrc> <dest>
+bin/hadoop fs -put input /user/tanay/input
+
+#Run the code
+Trends:
+	bin/hadoop jar tweetstrends.jar org.aic.MapReduceTrends /user/tanay/input /user/tanay/output
+
+Index:
+	bin/hadoop jar tweetsindex.jar org.aic.MapReduceIndex /user/tanay/input /user/tanay/output
+
+TODO: 
+	Multiple Reducers. Currently there are is only 1 reducer
+
+# Get the output
+rm -r output
+bin/hadoop fs -get output output
+
+
+
+# Hadoop on AmazonEC2
+bin/hadoop fs -put input /user/ubuntu/input
+bin/hadoop jar hadoop*examples*.jar wordcount /user/ubuntu/input /user/ubuntu/output
+bin/hadoop fs -get output output
+
+
+
+
+
+
+

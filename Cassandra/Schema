@@ -1,0 +1,7 @@
+create keyspace Keyspace1 with placement_strategy = 'org.apache.cassandra.locator.SimpleStrategy' and strategy_options = {replication_factor:1};
+use Keyspace1;
+create column family TrendsColumnFamily with default_validation_class=CounterColumnType and key_validation_class=UTF8Type and comparator=UTF8Type;
+create column family InvertedIndexColumnFamily with default_validation_class=UTF8Type and key_validation_class=UTF8Type and comparator=UTF8Type;
+
+
+

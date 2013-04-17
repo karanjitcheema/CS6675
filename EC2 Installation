@@ -1,0 +1,128 @@
+Nodes:
+	ec2-54-244-161-195.us-west-2.compute.amazonaws.com (10.253.76.221)
+	ec2-54-245-156-15.us-west-2.compute.amazonaws.com (10.254.11.30)
+
+Security Group:
+	22 0.0.0.0/0
+	1024-65535 Security Group Id
+	7000	Security Group Id
+	7199	Security Group Id
+	8888	0.0.0.0/0
+	9160	Security Group Id
+	61620 	Security Group Id
+	61621	Security Group Id
+	50070	0.0.0.0/0
+	50030	0.0.0.0/0
+	50060	0.0.0.0/0
+
+SSH:
+	Private Key Directory Permission: 700
+	Private Key Permission: 600
+	ssh -i /home/tanay/Desktop/privateKey/tanayamitshah.pem ubuntu@
+
+Java: 
+	JRE:	
+		sudo mkdir -p /usr/java/latest
+		cd /usr/java/latest
+		sudo wget http://download.oracle.com/otn-pub/java/jdk/6u43-b01/jre-6u43-linux-x64.bin
+		sudo chmod a+x /usr/java/latest/jre-6u43-linux-x64.bin
+		sudo ./jre-6u43-linux-x64.bin
+		sudo update-alternatives --install "/usr/bin/java" "java" "/usr/java/latest/jre1.6.0_43/bin/java" 1
+
+	JDK: 
+		sudo mkdir -p /usr/lib/jvm
+		cd /usr/lib/jvm
+		sudo wget http://download.oracle.com/otn-pub/java/jdk/6u38-b05/jdk-6u38-linux-x64.bin
+		sudo chmod +x jdk-6u38-linux-x64.bin 
+		sudo ./jdk-6u38-linux-x64.bin 
+		sudo rm jdk-6u38-linux-x64.bin 
+		
+		sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk1.6.0_38/bin/javac 1
+		sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk1.6.0_38/bin/java 1
+		sudo update-alternatives --install /usr/bin/javaws javaws /usr/lib/jvm/jdk1.6.0_38/bin/javaws 1
+
+		sudo update-alternatives --config javac
+		sudo update-alternatives --config javaws
+		sudo update-alternatives --config java
+
+		export JAVA_HOME=/usr/lib/jvm/jdk1.6.0_38/
+		export PATH=$PATH:$JAVA_HOME/bin
+		
+	Check:	
+		java -version
+
+Cassandra:
+	cd ~
+	sudo wget http://www.trieuvan.com/apache/cassandra/1.1.10/apache-cassandra-1.1.10-bin.tar.gz
+	tar xvzf apache-cassandra-1.1.10-bin.tar.gz
+	rm apache-cassandra-1.1.10-bin.tar.gz
+	sudo mkdir -p /var/lib/cassandra/data
+	sudo chmod 777 /var/lib/cassandra/data
+	sudo mkdir -p /var/lib/cassandra/commitlog
+	sudo chmod 777 /var/lib/cassandra/commitlog
+	sudo mkdir -p /var/lib/cassandra/saved_caches
+	sudo chmod 777 /var/lib/cassandra/saved_caches
+	sudo mkdir -p /var/log/cassandra/
+	sudo chmod 777 /var/log/cassandra/
+
+	./cassandra -f &
+
+	kill -9 `ps ax | grep -is [c]assa | awk '{print $1}'` 2> /dev/null
+
+Pycassa:
+	sudo pip install pycassa
+	
+
+DeleteCassandra:
+	sudo rm -r /var/log/cassandra/*
+	sudo rm -r /var/lib/cassandra/commitlog/*
+	sudo rm -r /var/lib/cassandra/data/*
+	sudo rm -r /var/lib/cassandra/saved_caches/*
+
+
+Passwordless ssh:
+	ssh-keygen -t rsa -P ""
+	cat home/ubuntu/.ssh/id_rsa.pub >> home/ubuntu/.ssh/authorized_keys
+	Copy the authorized key from one to the other also
+
+
+Hadoop:
+	wget http://mirror.sdunix.com/apache/hadoop/core/hadoop-1.0.4/hadoop-1.0.4-bin.tar.gz
+	tar xvzf hadoop-1.0.4-bin.tar.gz 
+	rm hadoop-1.0.4-bin.tar.gz 
+	mkdir hadoopData
+	sudo chmod 755 hadoopData
+	
+	http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-single-node-cluster/
+	http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-multi-node-cluster/ 
+		(change 5 files: master/slaves/core-site.xml/hdfs-site.xml/mapred-site.xml)
+
+	Format:
+		rm -r /home/ubuntu/hadoop-1.0.4/logs/*
+		rm -r /home/ubuntu/hadoopData/*
+	
+
+	Start hadoop:
+		Master:	bin/start-dfs.sh
+		Master: bin/start-mapred.sh
+
+	Running Job:
+		bin/hadoop fs -rmr /user/ubuntu/input
+		bin/hadoop fs -rmr /user/ubuntu/output
+		bin/hadoop fs -put input /user/ubuntu/input
+	
+		bin/hadoop jar tweetstrends.jar org.aic.MapReduceTrends /user/ubuntu/input /user/ubuntu/output
+
+		rm -r output
+		bin/hadoop fs -get output output
+
+	
+
+	Stop hadoop:	
+		Master: bin/stop-mapred.sh
+		Master: bin/stop-dfs.sh
+	
+
+
+	
+	
